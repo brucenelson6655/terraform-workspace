@@ -10,7 +10,7 @@ Virtual Network resource : https://registry.terraform.io/providers/hashicorp/azu
 
 Subnet REsource : https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet
 
-NAT Fateway : https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet_nat_gateway_association
+NAT Gateway : https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet_nat_gateway_association
 
 Storage PE : https://medium.com/@maciej.skorupka/databricks-workspace-storage-private-endpoints-and-terraform-62d3505cd0fd
 
