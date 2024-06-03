@@ -26,6 +26,7 @@ locals {
   sa = "brne6598"
   public_sub = "public-subnet"
   private_sub = "private-subnet"
+  dbfs_resouce_id = "${azurerm_databricks_workspace.ws.managed_resource_group_id}/providers/Microsoft.Storage/storageAccounts/${azurerm_databricks_workspace.ws.storage_account_name}"
   tags = {
     Environment = "Demo"
     Owner       = lookup(data.external.me.result, "name")
@@ -118,6 +119,57 @@ resource "azurerm_subnet_network_security_group_association" "pubnsg" {
 resource "azurerm_subnet_network_security_group_association" "privnsg" {
   subnet_id                 = azurerm_subnet.private.id
   network_security_group_id = azurerm_network_security_group.nsg.id
+}
+
+// Private End points 
+
+resource "azurerm_private_endpoint" "dfspe" {
+  name                = "${local.prefix}-dfs-pe"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  subnet_id           = azurerm_subnet.pe.id
+
+
+  private_dns_zone_group {
+    name = "add_to_azure_private_dns_dfs"
+    private_dns_zone_ids = [azurerm_private_dns_zone.adlsstorage.id]
+  }
+
+  private_service_connection {
+    name                           = "${local.sa}-dfs"
+    private_connection_resource_id = "${local.dbfs_resouce_id}"
+    subresource_names              = ["dfs"]
+    is_manual_connection = false
+  }
+}
+
+resource "azurerm_private_endpoint" "blobpe" {
+  name                = "${local.prefix}-blob-pe"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  subnet_id           = azurerm_subnet.pe.id
+  
+    private_dns_zone_group {
+    name = "add_to_azure_private_dns_blob"
+    private_dns_zone_ids = [azurerm_private_dns_zone.blobstorage.id]
+  }
+
+  private_service_connection {
+    name                           = "${local.sa}-blob"
+    private_connection_resource_id = "${local.dbfs_resouce_id}"
+    subresource_names              = ["blob"]
+    is_manual_connection = false
+  }
+}
+
+resource "azurerm_private_dns_zone" "blobstorage" {
+  name                = "privatelink.blob.core.windows.net"
+  resource_group_name = azurerm_resource_group.rg.name
+}
+
+resource "azurerm_private_dns_zone" "adlsstorage" {
+  name                = "privatelink.dfs.core.windows.net"
+  resource_group_name = azurerm_resource_group.rg.name
 }
 
 resource "azurerm_databricks_workspace" "ws" {
