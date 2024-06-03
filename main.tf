@@ -109,6 +109,7 @@ resource "azurerm_network_security_group" "nsg" {
   name = "${local.rg}-nsg"
   resource_group_name = azurerm_resource_group.rg.name
   location = azurerm_resource_group.rg.location
+  tags = "${local.tags}"
 }
 
 resource "azurerm_subnet_network_security_group_association" "pubnsg" {
@@ -128,6 +129,7 @@ resource "azurerm_private_endpoint" "dfspe" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   subnet_id           = azurerm_subnet.pe.id
+  tags = "${local.tags}"
 
 
   private_dns_zone_group {
@@ -148,6 +150,7 @@ resource "azurerm_private_endpoint" "blobpe" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   subnet_id           = azurerm_subnet.pe.id
+  tags = "${local.tags}"
   
     private_dns_zone_group {
     name = "add_to_azure_private_dns_blob"
@@ -165,11 +168,13 @@ resource "azurerm_private_endpoint" "blobpe" {
 resource "azurerm_private_dns_zone" "blobstorage" {
   name                = "privatelink.blob.core.windows.net"
   resource_group_name = azurerm_resource_group.rg.name
+  tags = "${local.tags}"
 }
 
 resource "azurerm_private_dns_zone" "adlsstorage" {
   name                = "privatelink.dfs.core.windows.net"
   resource_group_name = azurerm_resource_group.rg.name
+  tags = "${local.tags}"
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "dfszone" {
@@ -177,6 +182,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "dfszone" {
   resource_group_name   = azurerm_resource_group.rg.name
   private_dns_zone_name = azurerm_private_dns_zone.adlsstorage.name
   virtual_network_id    = azurerm_virtual_network.vn.id
+  tags = "${local.tags}"
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "blobzone" {
@@ -184,6 +190,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "blobzone" {
   resource_group_name   = azurerm_resource_group.rg.name
   private_dns_zone_name = azurerm_private_dns_zone.blobstorage.name
   virtual_network_id    = azurerm_virtual_network.vn.id
+  tags = "${local.tags}"
 }
 
 resource "azurerm_databricks_workspace" "ws" {
