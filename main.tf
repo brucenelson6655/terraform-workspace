@@ -26,7 +26,7 @@ locals {
   sa = "brne6598"
   public_sub = "public-subnet"
   private_sub = "private-subnet"
-  dbfs_resouce_id = "${azurerm_databricks_workspace.ws.managed_resource_group_id}/providers/Microsoft.Storage/storageAccounts/${azurerm_databricks_workspace.ws.storage_account_name}"
+  dbfs_resouce_id = "${azurerm_databricks_workspace.ws.managed_resource_group_id}/providers/Microsoft.Storage/storageAccounts/dbstorage${local.sa}"
   tags = {
     Environment = "Demo"
     Owner       = lookup(data.external.me.result, "name")
@@ -170,6 +170,20 @@ resource "azurerm_private_dns_zone" "blobstorage" {
 resource "azurerm_private_dns_zone" "adlsstorage" {
   name                = "privatelink.dfs.core.windows.net"
   resource_group_name = azurerm_resource_group.rg.name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "dfszone" {
+  name                  = "${local.prefix}-dfslink"
+  resource_group_name   = azurerm_resource_group.rg.name
+  private_dns_zone_name = azurerm_private_dns_zone.adlsstorage.name
+  virtual_network_id    = azurerm_virtual_network.vn.id
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "blobzone" {
+  name                  = "${local.prefix}-bloblink"
+  resource_group_name   = azurerm_resource_group.rg.name
+  private_dns_zone_name = azurerm_private_dns_zone.blobstorage.name
+  virtual_network_id    = azurerm_virtual_network.vn.id
 }
 
 resource "azurerm_databricks_workspace" "ws" {
