@@ -21,9 +21,7 @@ data "external" "me" {
 }
 
 locals {
-  prefix = "brn-e-adb-6598"
-  rg = "brn-demo-tf-ws"
-  sa = "brne6598"
+  prefix = "brn-gc-serverless-test"
   public_sub = "public-subnet"
   private_sub = "private-subnet"
   dbfs_resouce_id = "${azurerm_databricks_workspace.ws.managed_resource_group_id}/providers/Microsoft.Storage/storageAccounts/${azurerm_databricks_workspace.ws.custom_parameters[0].storage_account_name}"
@@ -35,7 +33,7 @@ locals {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = "${local.rg}-rg"
+  name     = "${local.prefix}-rg"
   location = var.region
   tags     = local.tags
 }
@@ -106,7 +104,7 @@ resource "azurerm_subnet" "pe" {
   
 
 resource "azurerm_network_security_group" "nsg" {
-  name = "${local.rg}-nsg"
+  name = "${local.prefix}-nsg"
   resource_group_name = azurerm_resource_group.rg.name
   location = azurerm_resource_group.rg.location
   tags = "${local.tags}"
@@ -138,7 +136,7 @@ resource "azurerm_private_endpoint" "dfspe" {
   }
 
   private_service_connection {
-    name                           = "${local.sa}-dfs"
+    name                           = "${local.prefix}-dfs"
     private_connection_resource_id = "${local.dbfs_resouce_id}"
     subresource_names              = ["dfs"]
     is_manual_connection = false
@@ -158,7 +156,7 @@ resource "azurerm_private_endpoint" "blobpe" {
   }
 
   private_service_connection {
-    name                           = "${local.sa}-blob"
+    name                           = "${local.prefix}-blob"
     private_connection_resource_id = "${local.dbfs_resouce_id}"
     subresource_names              = ["blob"]
     is_manual_connection = false
@@ -206,7 +204,7 @@ resource "azurerm_databricks_workspace" "ws" {
     no_public_ip             = true
     private_subnet_name      = azurerm_subnet.private.name
     public_subnet_name       = azurerm_subnet.public.name
-    storage_account_name     = "dbstorage${local.sa}"
+    // storage_account_name     = "<custom storage account name>"
     storage_account_sku_name = "Standard_GRS"
     virtual_network_id       = azurerm_virtual_network.vn.id
     public_subnet_network_security_group_association_id = azurerm_network_security_group.nsg.id
