@@ -21,7 +21,7 @@ data "external" "me" {
 }
 
 locals {
-  prefix = "brn-gc-serverless-test"
+  prefix = "databricks-workspace"
   public_sub = "public-subnet"
   private_sub = "private-subnet"
   dbfs_resouce_id = "${azurerm_databricks_workspace.ws.managed_resource_group_id}/providers/Microsoft.Storage/storageAccounts/${azurerm_databricks_workspace.ws.custom_parameters[0].storage_account_name}"
