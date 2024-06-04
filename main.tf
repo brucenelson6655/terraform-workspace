@@ -26,7 +26,7 @@ locals {
   sa = "brne6598"
   public_sub = "public-subnet"
   private_sub = "private-subnet"
-  dbfs_resouce_id = "${azurerm_databricks_workspace.ws.managed_resource_group_id}/providers/Microsoft.Storage/storageAccounts/dbstorage${local.sa}"
+  dbfs_resouce_id = "${azurerm_databricks_workspace.ws.managed_resource_group_id}/providers/Microsoft.Storage/storageAccounts/${azurerm_databricks_workspace.ws.custom_parameters[0].storage_account_name}"
   tags = {
     Environment = "Demo"
     Owner       = lookup(data.external.me.result, "name")
