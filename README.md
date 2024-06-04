@@ -18,3 +18,6 @@ Github : https://github.com/hashicorp/terraform-provider-azurerm/tree/main/inter
 
 Handy Helper : https://servian.dev/how-to-hardening-azure-databricks-using-terraform-feb23c231080
 
+importing resources : https://camargo-wes.medium.com/how-to-import-an-existing-azure-resource-into-your-terraform-state-with-azure-storage-backend-2f6cbdee5927
+
+
