@@ -1,3 +1,5 @@
+### Terraform : databricks_stoarge_firewall_enabled : https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/databricks_workspace#default_storage_firewall_enabled
+
 Docs TOC : https://learn.microsoft.com/en-us/azure/databricks/dev-tools/terraform/azure-workspace 
 
 Databricks Resource : https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/databricks_workspace 

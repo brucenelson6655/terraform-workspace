@@ -3,3 +3,11 @@
 terraform.tfstate
 terraform.tfstate.backup
 run.local.sh
+brn-gc-serverless-test-ws
+brn-test-deployment
+brn-companion-deployment
+brn-ipacl-test-deployment
+brn-uc-by-default
+rug-uc-by-default-wus2
+uc-by-default-testing
+.DS_Store
