@@ -9,15 +9,12 @@ terraform {
 
 provider "azurerm" {
   features {}
+ /* subscription_id = "<optional subscription id>" */
 }
 
 variable "region" {
   type    = string
   default = "westus"
-}
-
-data "external" "me" {
-  program = ["az", "account", "show", "--query", "user"]
 }
 
 locals {
@@ -27,8 +24,8 @@ locals {
   dbfs_resouce_id = "${azurerm_databricks_workspace.ws.managed_resource_group_id}/providers/Microsoft.Storage/storageAccounts/${azurerm_databricks_workspace.ws.custom_parameters[0].storage_account_name}"
   tags = {
     Environment = "Demo"
-    Owner       = lookup(data.external.me.result, "name")
-    RemoveAfter = "2024-11-01"
+    Owner       = "<user name>@databricks.com"
+    RemoveAfter = "2025-03-01"
   }
 }
 
@@ -97,11 +94,23 @@ resource "azurerm_subnet" "private" {
   
 resource "azurerm_subnet" "pe" {
     name           = "PE"
-    address_prefixes = ["100.64.1.192/26"]
+    address_prefixes = ["100.64.1.128/26"]
     resource_group_name  = azurerm_resource_group.rg.name
     virtual_network_name = azurerm_virtual_network.vn.name
   }
-  
+
+resource "azurerm_subnet" "PBI" {
+    name           = "PBI"
+    address_prefixes = ["100.64.1.192/26"]
+    resource_group_name  = azurerm_resource_group.rg.name
+    virtual_network_name = azurerm_virtual_network.vn.name
+    delegation {
+      name = "brn_delegation"
+      service_delegation {
+        name = "Microsoft.PowerPlatform/vnetaccesslinks"
+      }
+    }
+  }  
 
 resource "azurerm_network_security_group" "nsg" {
   name = "${local.prefix}-nsg"
